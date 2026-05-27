@@ -1,0 +1,19 @@
+# ─── Build output ────────────────────────────────────────────────────────────
+target/
+
+# ─── Secrets / local environment overrides ───────────────────────────────────
+# environment.properties holds the Groq API key and any other local secrets.
+# It must NEVER be committed.  Developers create it manually from the template
+# comment inside the file.  Jenkins injects secrets via withCredentials instead.
+src/test/resources/environment.properties
+
+# ─── IDE ─────────────────────────────────────────────────────────────────────
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/dictionaries
+.idea/shelf
+*.iml
+
+# ─── OS ──────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db

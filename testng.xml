@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Notes App Automation Suite" data-provider-thread-count="2">
+    <test name="Full Automation Suite">
+        <classes>
+            <class name="com.expandtesting.runners.TestRunner" />
+        </classes>
+    </test>
+</suite>

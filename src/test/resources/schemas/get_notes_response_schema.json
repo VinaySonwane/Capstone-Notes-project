@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Get Notes Response Schema",
+  "description": "2.3 — JSON schema for GET /notes success response",
+  "type": "object",
+  "required": ["success", "status", "message", "data"],
+  "properties": {
+    "success": { "type": "boolean", "enum": [true] },
+    "status":  { "type": "integer", "enum": [200] },
+    "message": { "type": "string" },
+    "data": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "category", "completed"],
+        "properties": {
+          "id":        { "type": "string" },
+          "title":     { "type": "string" },
+          "category":  { "type": "string", "enum": ["Home", "Work", "Personal"] },
+          "completed": { "type": "boolean" }
+        },
+        "additionalProperties": true
+      }
+    }
+  }
+}
