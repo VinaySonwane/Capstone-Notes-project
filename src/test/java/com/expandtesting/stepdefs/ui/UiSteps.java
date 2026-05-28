@@ -89,6 +89,26 @@ public class UiSteps {
         );
     }
 
+    // ─── Create Note (TS-UI-03) ──────────────────────────────────
+
+    /**
+     * TS-UI-03: Verify user can create a new note via UI.
+     * Title, description and category all come from the Examples table.
+     */
+    @When("the user creates a new note with title {string} description {string} and category {string}")
+    public void theUserCreatesANewNote(String title, String description, String category) {
+        currentNoteTitle = title;
+        notesPage.createNewNote(category, title, description);
+    }
+
+    @Then("the new note with title {string} should be visible on the dashboard")
+    public void theNewNoteShouldBeVisibleOnDashboard(String title) {
+        Assert.assertTrue(
+                notesPage.isNoteVisible(title),
+                "Newly created note was not visible on dashboard: " + title
+        );
+    }
+
     // ─── Edit (TS-UI-04) ─────────────────────────────────────────
 
     /**

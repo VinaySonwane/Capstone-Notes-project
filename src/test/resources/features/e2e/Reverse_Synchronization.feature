@@ -4,7 +4,7 @@ Feature: Reverse E2E Synchronization
   I want the UI dashboard to dynamically reflect API database deletions
   So that users always see accurate data
 
-  @Hybrid @TS-14 @FR-07
+  @Hybrid @TS-DEF-02 @FR-07
   Scenario Outline: Verify note deleted via API disappears from UI
     Given the user is logged into the Notes UI with valid credentials
     And a note is created via the API with title "<title>" description "<description>" and category "<category>"

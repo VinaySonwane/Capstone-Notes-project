@@ -73,6 +73,15 @@ public class EdgeCaseSteps {
                 "Expected " + status1 + " or " + status2 + ", but got: " + actualStatus);
     }
 
+    // TS-NEG-05: DELETE invalid ID must return exactly 404 (per requirement sheet)
+    @Then("the API should return a {int} Not Found status")
+    public void apiShouldReturnNotFound(int expectedStatus) {
+        Assert.assertEquals(apiResponse.getStatusCode(), expectedStatus,
+                "Expected " + expectedStatus + " for invalid note ID but got: "
+                        + apiResponse.getStatusCode()
+                        + ". Body: " + apiResponse.getBody().asString());
+    }
+
     // ─── UI Dashboard refresh ─────────────────────────────────────
 
     @When("the user refreshes the UI dashboard")

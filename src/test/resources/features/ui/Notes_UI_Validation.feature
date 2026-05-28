@@ -21,6 +21,18 @@ Feature: Notes UI Functional Validation
       | Alice Johnson  | test_alice_01@mailinator.com       | Test@Alice1 |
       | Bob Martinez   | test_bob_02@mailinator.com         | Test@Bob202 |
 
+  @UI @TS-UI-03
+  Scenario Outline: Verify user can create a new note via UI
+    Given the user is logged into the Notes UI with valid credentials
+    When the user creates a new note with title "<title>" description "<description>" and category "<category>"
+    Then the new note with title "<title>" should be visible on the dashboard
+
+    Examples:
+      | title                   | description                          | category |
+      | UI Created Note - Work  | Work note created via UI form        | Work     |
+      | UI Created Note - Home  | Home note created via UI form        | Home     |
+      | UI Created Note - Pers  | Personal note created via UI form    | Personal |
+
   @UI @TS-UI-04
   Scenario Outline: Verify user can edit an existing note
     Given the user is logged into the Notes UI with valid credentials

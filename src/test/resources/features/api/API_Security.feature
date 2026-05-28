@@ -3,7 +3,7 @@ Feature: API Security and Error Handling
   I want to enforce token authentication and handle bad requests gracefully
   So that endpoints are secure
 
-  @API @TS-16 @FR-09
+  @API @TS-NEG-03 @FR-09
   Scenario Outline: Verify unauthorized access is blocked
     When a GET request is sent to "<endpoint>" without an auth token
     Then the API should return a 401 Unauthorized status
@@ -12,7 +12,7 @@ Feature: API Security and Error Handling
       | endpoint |
       | /notes   |
 
-  @API @TS-17 @FR-09
+  @API @TS-NEG-05 @FR-09
   Scenario Outline: Verify deletion of invalid note ID is handled
     Given the user is authenticated via the API
     When a DELETE request is sent for an invalid note ID "<invalid_id>"

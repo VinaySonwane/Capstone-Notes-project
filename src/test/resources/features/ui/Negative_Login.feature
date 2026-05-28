@@ -3,7 +3,7 @@ Feature: UI Negative Login Validation
   I want to ensure invalid users cannot access the dashboard
   So that user data remains secure
 
-  @UI @TS-02 @TS-03 @FR-09
+  @UI @TS-NEG-01 @FR-09
   Scenario Outline: Verify system rejects invalid login attempts
     Given the user is on the login page
     When the user attempts to login with email "<email>" and password "<password>"
