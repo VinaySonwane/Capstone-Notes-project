@@ -6,10 +6,12 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * AdDismissalUtils
@@ -49,8 +51,10 @@ public class AdDismissalUtils {
                                 + "  history.replaceState(null, '', window.location.pathname + window.location.search);"
                                 + "}"
                 );
-                // Brief pause for the overlay to collapse after the hash is removed.
-                Thread.sleep(600);
+                // Wait until the URL no longer contains the vignette fragment —
+                // replaces Thread.sleep(600) with a condition-based poll (max 3 s).
+                new WebDriverWait(driver, Duration.ofSeconds(3))
+                        .until(d -> !d.getCurrentUrl().contains("google_vignette"));
             }
 
             // ── Layer 2: click a visible "Close" button in the main document ──────
@@ -66,7 +70,14 @@ public class AdDismissalUtils {
                 try {
                     if (btn.isDisplayed()) {
                         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", btn);
-                        Thread.sleep(400);
+                        // Wait until the clicked close button disappears from the DOM —
+                        // replaces Thread.sleep(400) with a staleness/invisibility check (max 3 s).
+                        final WebElement clickedBtn = btn;
+                        new WebDriverWait(driver, Duration.ofSeconds(3))
+                                .until(ExpectedConditions.or(
+                                        ExpectedConditions.stalenessOf(clickedBtn),
+                                        ExpectedConditions.invisibilityOf(clickedBtn)
+                                ));
                         break;
                     }
                 } catch (Exception ignored) {}
@@ -84,7 +95,14 @@ public class AdDismissalUtils {
                         try {
                             if (btn.isDisplayed()) {
                                 ((JavascriptExecutor) driver).executeScript("arguments[0].click();", btn);
-                                Thread.sleep(300);
+                                // Wait until the iframe close button disappears —
+                                // replaces Thread.sleep(300) with a staleness check (max 2 s).
+                                final WebElement clickedInner = btn;
+                                new WebDriverWait(driver, Duration.ofSeconds(2))
+                                        .until(ExpectedConditions.or(
+                                                ExpectedConditions.stalenessOf(clickedInner),
+                                                ExpectedConditions.invisibilityOf(clickedInner)
+                                        ));
                                 break;
                             }
                         } catch (Exception ignored) {}

@@ -9,10 +9,12 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class NotesPage extends BaseUi {
 
@@ -178,8 +180,18 @@ public class NotesPage extends BaseUi {
             // No confirmation dialog — deletion was immediate
         }
 
-        // Wait briefly for the DOM to settle after deletion
-        try { Thread.sleep(800); } catch (InterruptedException ignored) {}
+        // Wait for the delete button itself to become stale — confirms the card was
+        // removed from the DOM. Replaces Thread.sleep(800) with a condition-based wait.
+        By anyDeleteBtn = By.xpath(
+                "//*[normalize-space(text())='" + noteTitle + "' or contains(text(),'" + noteTitle + "')]"
+                        + "/ancestor::div[contains(@class,'card') or contains(@class,'note-item') or contains(@class,'note ')]"
+        );
+        try {
+            new WebDriverWait(driver, Duration.ofSeconds(5))
+                    .until(ExpectedConditions.invisibilityOfElementLocated(anyDeleteBtn));
+        } catch (Exception ignored) {
+            // Card already gone or XPath did not match — acceptable
+        }
     }
 
     // ─── Category Filter (TS-UI-06) ───────────────────────────────
@@ -208,8 +220,17 @@ public class NotesPage extends BaseUi {
         WebElement tab = wait.until(ExpectedConditions.elementToBeClickable(categoryTab));
         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", tab);
 
-        // Small wait for the filtered list to render
-        try { Thread.sleep(800); } catch (InterruptedException ignored) {}
+        // Wait for the filtered list to render — at least one note card must become visible.
+        // Replaces Thread.sleep(800) with an explicit presence-of-element wait (max 5 s).
+        By anyCard = By.cssSelector(
+                "[data-testid='note-card'], .card-body, div.card, div[class*='note-item'], div[class*='noteItem']"
+        );
+        try {
+            new WebDriverWait(driver, Duration.ofSeconds(5))
+                    .until(ExpectedConditions.presenceOfElementLocated(anyCard));
+        } catch (Exception ignored) {
+            // No cards visible after filter — areAllVisibleNotesInCategory() will handle this
+        }
     }
 
     /**
@@ -234,7 +255,19 @@ public class NotesPage extends BaseUi {
         WebDriver driver = GridDriverManager.getDriver();
 
         // ── Layer 1: wait for the filter to settle ────────────────────────────────
-        try { Thread.sleep(1000); } catch (InterruptedException ignored) {}
+        // Wait for the active filter tab to become visible — replaces Thread.sleep(1000)
+        // with a FluentWait that polls every 200 ms until the active tab text is found
+        // or 4 seconds elapse.
+        By activeTabSettle = By.xpath(
+                "//a[contains(@class,'active') or contains(@class,'selected') or @aria-selected='true'] | "
+                        + "//button[contains(@class,'active') or contains(@class,'selected') or @aria-selected='true'] | "
+                        + "//li[contains(@class,'active') or contains(@class,'selected')]"
+        );
+        new FluentWait<>(driver)
+                .withTimeout(Duration.ofSeconds(4))
+                .pollingEvery(Duration.ofMillis(200))
+                .ignoring(NoSuchElementException.class)
+                .until(ExpectedConditions.presenceOfElementLocated(activeTabSettle));
 
         // ── Layer 2: check the active filter tab ──────────────────────────────────
         // The app renders category tabs like: Home | Work | Personal | All
